@@ -3,7 +3,7 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 
-// Uygulama ve middleware'ler
+// Uygulama və middleware'lər
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -15,18 +15,24 @@ app.use(cors({
   credentials: true,
 }));
 
+const port = process.env.PORT || 4000;
+
+// <<< === BURADA server-i TANIT
+const server = http.createServer(app);
+
+// <<< === İNDİ io-nu server ilə yarat
 const io = new Server(server, {
   cors: {
     origin: "https://frontend-elanburada.vercel.app",
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket", "polling"], // önemli!
+  transports: ["websocket", "polling"],
 });
-const port = process.env.PORT || 4000;
+
 import "./Config/Config.js";
 
-// Router'lar
+// Router-lər
 import { authrouter } from "./Routers/authrouter.js";
 import addRouter from "./Routers/Addrouter.js";
 import { messagerouter } from "./Routers/Messagerouter.js";
@@ -34,25 +40,17 @@ import { conversationrouter } from "./Routers/Conversationrouter.js";
 import { initializeSocket } from "./Routers/Socketrouter.js";
 import profilerouter from "./Routers/profilerouter.js";
 
-// API Endpoint'leri
+// API endpoint-lər
 app.use("/tacstyle/auth", authrouter);
 app.use("/api/ads", addRouter);
 app.use("/api/conversations", conversationrouter);
 app.use("/api/messages", messagerouter);
 app.use("/api/profile", profilerouter);
 
-const server = http.createServer(app);
-
-
-
-
-
-
-
+// Socket.io başlat
 initializeSocket(io);
 
-server.listen(port,()=>{
-
-    console.log("3000 portda dinlenilir");
-    
-})
+// Serveri dinlə
+server.listen(port, () => {
+  console.log(`${port} portunda dinleniyor`);
+});
