@@ -13,12 +13,9 @@ export const createUserProfile = async (req, res) => {
       location
     } = req.body;
 
-    let profileImage;
-    if (req.file) {
-      profileImage = `https://${req.get("host")}/uploads/${req.file.filename}`;
-    }
-    
-  
+    const profileImage = req.file
+      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      : "";
 
     const userProfile = new UserProfile({
       userId,
