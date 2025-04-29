@@ -8,10 +8,11 @@ export const CreateAd = async (req, res) => {
     if (!name || !price || !category || !city || !about || !email) {
       return res.status(400).send({ message: "Bütün sahələr tələb olunur" });
     }
-
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
     const mediaUrl = req.files
-      ? req.files.map((file) => `https://${req.get("host")}/uploads/${file.filename}`)
+      ? req.files.map((file) => `${protocol}://${req.get("host")}/uploads/${file.filename}`)
       : [];
+    
       
     const newAd = new Add({
       name,
