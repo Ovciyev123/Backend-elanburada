@@ -15,6 +15,14 @@ app.use(cors({
   credentials: true,
 }));
 
+const io = new Server(server, {
+  cors: {
+    origin: "https://frontend-elanburada.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+  transports: ["websocket", "polling"], // önemli!
+});
 const port = process.env.PORT || 4000;
 import "./Config/Config.js";
 
@@ -36,11 +44,7 @@ app.use("/api/profile", profilerouter);
 const server = http.createServer(app);
 
 
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
+
 
 
 
