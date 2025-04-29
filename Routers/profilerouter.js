@@ -6,7 +6,8 @@ import {
     getAllUserProfiles, 
     updateUserProfile,
     getUserProfileByEmail, // Yeni controller funksiyası
-    getUserProfileById
+    getUserProfileById,
+    ChatProfiles
 } from '../Controllers/profilecontroller.js';
 
 const profilerouter = express.Router();
@@ -19,5 +20,6 @@ profilerouter.get('/', getAllUserProfiles);
 profilerouter.get('/user/:id', getUserProfileById);
 profilerouter.put('/:id', updateUserProfile);
 profilerouter.delete('/:id', deleteUserProfile);
+profilerouter.post("/chatprofile",ChatProfiles)
 
 export default profilerouter;

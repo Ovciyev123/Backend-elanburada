@@ -94,8 +94,23 @@ export const deleteUserProfile = async (req, res) => {
     res.status(200).json({ message: 'Profil silindi' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }}
+  export const ChatProfiles = async (req, res) => {
+    try {
+      const { userIds } = req.body; 
+      if (!userIds || !Array.isArray(userIds)) {
+        return res.status(400).json({ error: 'userIds alanı gereklidir ve dizi olmalıdır.' });
+      }
+      
+      const profiles = await ProfileModel.find({ _id: { $in: userIds } })
+      res.json(profiles);
+    } catch (error) {
+      console.error('Profil sorgulamada hata:', error);
+      res.status(500).json({ error: 'Sunucu hatası' });
+    }
   }
-};
+
+
 
 
 

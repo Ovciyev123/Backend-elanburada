@@ -9,6 +9,12 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads")); 
 
+app.use(cors({
+  origin: 'https://frontend-elanburada.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}));
+
 const port = process.env.PORT || 4000;
 import "./Config/Config.js";
 
@@ -41,7 +47,7 @@ const io = new Server(server, {
 
 initializeSocket(io);
 
-server.listen(3000,()=>{
+server.listen(port,()=>{
 
     console.log("3000 portda dinlenilir");
     
