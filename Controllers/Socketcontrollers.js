@@ -1,7 +1,3 @@
-import { MessageModel } from "../Models/messagemodel.js";
-
-
-
 let users = [];
 
 export const socketEvents = (socket, io) => {
@@ -37,43 +33,18 @@ export const socketEvents = (socket, io) => {
   });
 
   
-
-  socket.on("sendMessage", async ({ senderId, receiverId, content, conversationId }) => {
+  socket.on("sendMessage", ({ senderId, receiverId, content }) => {
     console.log(`sendMessage event -> senderId: ${senderId}, receiverId: ${receiverId}, content: ${content}`);
-  
-    const receiver = getUser(receiverId);
-  
-    // ✅ Mesajı DB-yə qeyd et
-    const newMessage = new MessageModel({
-      senderId,
-      receiverId,
-      content,
-      conversationId,
-    });
-  
-    await newMessage.save(); // Bu createdAt avtomatik əlavə edəcək
-  
-    const payload = {
-      _id: newMessage._id,
-      senderId,
-      content,
-      conversationId,
-      createdAt: newMessage.createdAt, // createdAt burada əlavə edilir
-    };
-  
-    // ✅ Qarşı tərəfə mesaj
-    if (receiver) {
-      io.to(receiver.socketId).emit("getMessage", payload);
-    }
-  
-    // ✅ Özünə də mesaj göstərmək istəsən
-    const sender = getUser(senderId);
-    if (sender) {
-      io.to(sender.socketId).emit("getMessage", payload);
+
+    const user = getUser(senderId);
+    if (user) {
+      console.log(`Mesaj iletiliyor -> receiver socketId: ${user.socketId}`);
+      io.to(user.socketId).emit("getMessage", { senderId, content });
+    } else {
+      console.error("Kullanıcı bulunamadı:", senderId);
     }
   });
-  
-  
+
 
   socket.on("disconnect", () => {
     console.log(`User disconnected -> socketId: ${socket.id}`);
