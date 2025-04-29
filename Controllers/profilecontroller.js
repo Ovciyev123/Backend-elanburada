@@ -102,7 +102,7 @@ export const deleteUserProfile = async (req, res) => {
         return res.status(400).json({ error: 'userIds alanı gereklidir ve dizi olmalıdır.' });
       }
       
-      const profiles = await ProfileModel.find({ _id: { $in: userIds } })
+      const profiles = await UserProfile.find({ _id: { $in: userIds } })
       res.json(profiles);
     } catch (error) {
       console.error('Profil sorgulamada hata:', error);
