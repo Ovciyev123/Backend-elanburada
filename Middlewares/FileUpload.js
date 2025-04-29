@@ -1,15 +1,22 @@
-import multer from "multer"
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const storage=multer.diskStorage({
+// __dirname alternativi (çünki ES6-da birbaşa __dirname yoxdur)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-    destination:(req,file,cb)=>{
+// Multer konfiqurasiyası
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads")); // tam yol
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + "_" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
 
-        return cb(null,"./uploads")
-    },
-    filename:(req,file,cb)=>{
+const upload = multer({ storage });
 
-        return cb(null,`${Date.now()}_${file.originalname}`)
-    }
-})
-
-export const upload=multer({storage})
+export default upload;
