@@ -10,7 +10,7 @@ export const CreateAd = async (req, res) => {
     }
 
     const mediaUrl = req.files
-      ? req.files.map((file) => `${req.protocol}://${req.get("host")}/uploads/${file.filename}`)
+      ? req.files.map((file) => `https://${req.get("host")}/uploads/${file.filename}`)
       : [];
 
     const newAd = new Add({
