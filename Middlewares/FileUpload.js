@@ -12,16 +12,18 @@ if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-// Multer konfiqurasiyası
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadPath); // artıq sabit yol
+    console.log("🟡 Fayl yazılır (destination):", file.originalname);
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
     const uniqueName = Date.now() + "_" + file.originalname;
+    console.log("🟢 Fayl adı yaradıldı (filename):", uniqueName);
     cb(null, uniqueName);
   },
 });
+
 
 const upload = multer({ storage });
 
