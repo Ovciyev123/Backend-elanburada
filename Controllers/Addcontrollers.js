@@ -10,8 +10,9 @@ export const CreateAd = async (req, res) => {
     }
 
     const mediaUrl = req.files
-      ? req.files.map((file) => `https://${req.get("host")}/uploads/${file.filename}`)
-      : [];
+    ? req.files.map((file) => file.path) // Cloudinary URL qaytarır
+    : [];
+  
 
     const newAd = new Add({
       name,
