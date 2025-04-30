@@ -8,7 +8,8 @@ import {
   removeFavorite, 
   getUserFavorites 
 } from "../Controllers/Addcontrollers.js";
-import { upload } from "../Middlewares/FileUpload.js"; 
+import upload from "../Middlewares/FileUpload.js";
+
 
 const addRouter = express.Router();
 

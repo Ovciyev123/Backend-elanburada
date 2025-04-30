@@ -1,5 +1,5 @@
 import express from 'express';
-import { upload } from '../Middlewares/FileUpload.js';
+
 import { 
     createUserProfile, 
     deleteUserProfile, 
@@ -9,6 +9,7 @@ import {
     getUserProfileById,
     ChatProfiles
 } from '../Controllers/profilecontroller.js';
+import upload from '../Middlewares/FileUpload.js';
 
 const profilerouter = express.Router();
 
