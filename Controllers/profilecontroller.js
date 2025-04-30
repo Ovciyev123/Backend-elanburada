@@ -4,7 +4,7 @@ import UserProfile from "../Models/Profilemodel.js";
 export const createUserProfile = async (req, res) => {
   try {
     const {
-        userId,
+      userId,
       email,
       profileName,
       bio,
@@ -13,9 +13,7 @@ export const createUserProfile = async (req, res) => {
       location
     } = req.body;
 
-    const profileImage = req.file
-      ? req.files.map((file) => file.path)
-      : "";
+    const profileImage = req.file?.path || "";
 
     const userProfile = new UserProfile({
       userId,
@@ -35,6 +33,7 @@ export const createUserProfile = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 export const getAllUserProfiles = async (req, res) => {
   try {
