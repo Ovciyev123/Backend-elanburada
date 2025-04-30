@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Authcontrollers } from '../Controllers/authcontroller.js';
-import { upload } from '../Middlewares/FileUpload.js';
+import upload from '../Middlewares/FileUpload.js';
+
 
 
 export const authrouter = new Router();
