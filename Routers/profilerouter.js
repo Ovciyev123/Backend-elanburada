@@ -15,7 +15,6 @@ const profilerouter = express.Router();
 
 // Məlumatları email ilə əldə etmək üçün yeni route
 profilerouter.get('/by-email/:email', getUserProfileByEmail); 
-
 profilerouter.post('/', upload.single('profileImage'), createUserProfile);
 profilerouter.get('/', getAllUserProfiles);
 profilerouter.get('/user/:id', getUserProfileById);
