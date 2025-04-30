@@ -59,19 +59,24 @@ export const getUserProfileById = async (req, res) => {
  
  
 export const getUserProfileByEmail = async (req, res) => {
-  const { email } = req.params;  
+  const { email } = req.params;
 
   try {
-      const profile = await UserProfile.findOne({ email });  // Emailə görə axtarış edirik
-      if (!profile) {
-          return res.status(404).json({ message: "Profile not found" });
-      }
-      return res.status(200).json(profile);  // Tapılan profili geri qaytarırıq
+    const profile = await UserProfile.findOne({
+      email: new RegExp('^' + email + '$', 'i'),
+    });
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Profil tapılmadı' });
+    }
+
+    return res.status(200).json(profile);
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Server error" });
+    console.error(error);
+    return res.status(500).json({ message: 'Server xətası' });
   }
 };
+
 
 export const updateUserProfile = async (req, res) => {
   try {
