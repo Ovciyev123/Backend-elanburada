@@ -5,13 +5,23 @@ import { Server } from "socket.io";
 
 // Uygulama və middleware'lər
 const app = express();
-app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads")); 
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://frontend-elanburada.vercel.app'
+];
+
 app.use(cors({
-  origin: 'https://frontend-elanburada.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: function (origin, callback) {
+    // SSR sorğuları və Postman üçün origin undefined olur, onu da icazə ver
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
@@ -23,8 +33,8 @@ const server = http.createServer(app);
 // <<< === İNDİ io-nu server ilə yarat
 const io = new Server(server, {
   cors: {
-    origin: "https://frontend-elanburada.vercel.app",
-    methods: ["GET", "POST"],
+    origin: ['https://frontend-elanburada.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST'],
     credentials: true,
   },
   transports: ["websocket", "polling"],
