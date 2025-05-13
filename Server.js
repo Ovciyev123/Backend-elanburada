@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-
-// Uygulama və middleware'lər
 const app = express();
 app.use(express.json());
 app.use("/uploads", express.static("uploads")); 
@@ -15,7 +13,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // SSR sorğuları və Postman üçün origin undefined olur, onu da icazə ver
+   
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -27,10 +25,9 @@ app.use(cors({
 
 const port = process.env.PORT || 4000;
 
-// <<< === BURADA server-i TANIT
+
 const server = http.createServer(app);
 
-// <<< === İNDİ io-nu server ilə yarat
 const io = new Server(server, {
   cors: {
     origin: ['https://frontend-elanburada.vercel.app', 'http://localhost:5173'],
