@@ -4,8 +4,6 @@ import Listing from "../Models/Addmodel.js";
 // 1. Elan Yaratma
 export const CreateAd = async (req, res) => {
   try {
-    console.log("Request received for creating an ad");
-
     // Verileri alalım
     const {
       name,
@@ -24,62 +22,68 @@ export const CreateAd = async (req, res) => {
       images,
       region,
       settlement,
-      mapAddress
+      mapAddress,
+      repairStatus,
+      hasExtract,
+      hasMortgage,
+      rentTypeMonthly,
+      rentTypeDaily,
+      isAgent
     } = req.body;
 
-    // Eksik alan kontrolü ve loglama
-    console.log("Request body:", req.body);
+    // Bütün gerekli alanların doğrulaması
     if (!name || !price || !category || !city || !address || !email || !dealType || !area) {
-      console.log("Missing required fields:", {
-        name,
-        price,
-        category,
-        city,
-        address,
-        email,
-        dealType,
-        area,
-      });
       return res.status(400).send({ message: "Bütün sahələr tələb olunur" });
     }
 
-    // Medya (resimler) kontrolü
-    console.log("Request files:", req.files);
-    const mediaUrl = req.files ? req.files.map((file) => file.path) : [];
-    console.log("Media URLs:", mediaUrl);
+    // Ekstra alanlar
+    if (!repairStatus) repairStatus = '';  // Varsayılan değer
+    if (hasExtract === undefined) hasExtract = false;  // Varsayılan değer
+    if (hasMortgage === undefined) hasMortgage = false;  // Varsayılan değer
+    if (rentTypeMonthly === undefined) rentTypeMonthly = false;  // Varsayılan değer
+    if (rentTypeDaily === undefined) rentTypeDaily = false;  // Varsayılan değer
+    if (isAgent === undefined) isAgent = true;  // Varsayılan değer
 
-    // Yeni ilanı yaratma
+    // Medya dosyaları (resimler)
+    const mediaUrl = req.files ? req.files.map((file) => file.path) : [];
+
+    // Yeni ilan nesnesini oluşturuyoruz
     const newAd = new Listing({
       name,
       price,
-      email,
-      dealType,
       category,
       city,
       address,
       phone,
-      region,
-      settlement,
-      mapAddress,
+      email,
+      dealType,
       area,
       rooms,
       floor,
       totalFloors,
       additionalInfo,
       images: mediaUrl,
-      createdAt: new Date(),
+      region,
+      settlement,
+      mapAddress,
+      repairStatus,
+      hasExtract,
+      hasMortgage,
+      rentTypeMonthly,
+      rentTypeDaily,
+      isAgent,
+      createdAt: new Date()
     });
 
-    console.log("Saving new ad:", newAd);
+    // Yeni ilanı kaydediyoruz
     await newAd.save();
-
-    console.log("Ad created successfully:", newAd);
     res.status(201).send({ message: "Elan yaradıldı", ad: newAd });
   } catch (error) {
     console.error("Error creating ad:", error);
     res.status(500).send({ message: "Elan yaradılarkən xəta baş verdi", error: error.message });
   }
 };
+
 
 // 2. Bütün Elanları Getir
 export const getAllAds = async (req, res) => {
