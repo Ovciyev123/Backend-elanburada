@@ -130,45 +130,51 @@ export const getAdByEmail = async (req, res) => {
 
 // 5. Favori Ekleme
 export const addFavorite = async (req, res) => {
-  const { id } = req.params; // Elan ID'si
-  const { email } = req.body; // Favori ekleyen kullanıcı emaili
+  const { id } = req.params;
 
   try {
     const ad = await Listing.findById(id);
     if (!ad) return res.status(404).send({ message: "Elan tapılmadı" });
 
-    // Kullanıcı favorilerine zaten eklemişse kontrol
-    const alreadyFavorited = ad.favorites.find(fav => fav.email === email);
+    const alreadyFavorited = ad.favorites.find(fav => fav.email === ad.email);
     if (!alreadyFavorited) {
       ad.favorites.push({
-        name: ad.name,
-        price: ad.price,
-        category: ad.category,
-        city: ad.city,
-        address: ad.address,
-        phone: ad.phone,
-        email: ad.email,
-        dealType: ad.dealType,
-        area: ad.area,
-        rooms: ad.rooms,
-        floor: ad.floor,
-        totalFloors: ad.totalFloors,
-        additionalInfo: ad.additionalInfo,
-        images: ad.images,
         region: ad.region,
         settlement: ad.settlement,
         mapAddress: ad.mapAddress,
+        address: ad.address,
+        images: ad.images,
+        name: ad.name,
+        isAgent: ad.isAgent,
+        email: ad.email,
+        phone: ad.phone,
+        dealType: ad.dealType,
+        category: ad.category,
+        city: ad.city,
+        rooms: ad.rooms,
+        area: ad.area,
+        floor: ad.floor,
+        totalFloors: ad.totalFloors,
+        additionalInfo: ad.additionalInfo,
+        price: ad.price,
+        repairStatus: ad.repairStatus,
+        hasExtract: ad.hasExtract,
+        hasMortgage: ad.hasMortgage,
+        rentTypeMonthly: ad.rentTypeMonthly,
+        rentTypeDaily: ad.rentTypeDaily,
         favoritedAt: new Date()
       });
+
       await ad.save();
     }
 
-    res.status(200).json({ message: "Favorilere eklendi", ad });
+    res.status(200).json({ message: "Favoritə əlavə edildi", ad });
   } catch (error) {
-    console.error("Favoriye eklenirken hata:", error);
-    res.status(500).json({ message: "Server hatası" });
+    console.error("Favoritə əlavə edilərkən xəta:", error);
+    res.status(500).json({ message: "Server xətası" });
   }
 };
+
 
 
 // 6. Favorilerden Çıkarma
