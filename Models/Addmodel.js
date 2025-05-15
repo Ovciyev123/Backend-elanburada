@@ -27,7 +27,7 @@ const listingSchema = new mongoose.Schema({
   totalFloors: { type: Number },
   additionalInfo: { type: String },
   price: { type: Number, required: true },
-  repairStatus: { type: String, enum: ['temirli', 'temirsiz', ''] },
+  repairStatus: { type: String, enum: ['təmirli', 'təmirsiz', ''] },
   hasExtract: { type: Boolean, default: false },
   hasMortgage: { type: Boolean, default: false },
   rentTypeMonthly: { type: Boolean, default: false },
