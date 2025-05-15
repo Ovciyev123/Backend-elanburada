@@ -64,7 +64,8 @@ const listingSchema = new mongoose.Schema({
         enum: ['təmirli', 'təmirsiz', '']
       },
       hasExtract: { type: Boolean, default: false },
-      hasMortgage: { type: Boolean, default: false },
+      hasMortgage: {
+         type: Boolean, default: false },
       rentTypeMonthly: { type: Boolean, default: false },
       rentTypeDaily: { type: Boolean, default: false },
       favoritedAt: { type: Date, default: Date.now }
