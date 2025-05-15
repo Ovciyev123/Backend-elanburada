@@ -32,43 +32,47 @@ const listingSchema = new mongoose.Schema({
   hasMortgage: { type: Boolean, default: false },
   rentTypeMonthly: { type: Boolean, default: false },
   rentTypeDaily: { type: Boolean, default: false },
- favorites: [
-  {
-    region: String,
-    settlement: String,
-    mapAddress: String,
-    address: String,
-    images: [String],
-    name: String,
-    isAgent: { type: Boolean, default: true },
-    email: String,
-    phone: String,
-    dealType: {
-      type: String,
-      enum: ['Alış', 'Kirayə']
-    },
-    category: {
-      type: String,
-      enum: ['Yeni tikili', 'Köhnə tikili', 'Həyət evi', 'Ofis', 'Qaraj', 'Obyekt', 'Torpaq']
-    },
-    city: String,
-    rooms: Number,
-    area: Number,
-    floor: Number,
-    totalFloors: Number,
-    additionalInfo: String,
-    price: Number,
-    repairStatus: {
-      type: String,
-      enum: ['təmirli', 'təmirsiz', '']
-    },
-    hasExtract: { type: Boolean, default: false },
-    hasMortgage: { type: Boolean, default: false },
-    rentTypeMonthly: { type: Boolean, default: false },
-    rentTypeDaily: { type: Boolean, default: false },
-    favoritedAt: { type: Date, default: Date.now }
-  }
-],
+ favorites: {
+  type: [
+    {
+      region: String,
+      settlement: String,
+      mapAddress: String,
+      address: String,
+      images: [String],
+      name: String,
+      isAgent: { type: Boolean, default: true },
+      email: String,
+      phone: String,
+      dealType: {
+        type: String,
+        enum: ['Alış', 'Kirayə']
+      },
+      category: {
+        type: String,
+        enum: ['Yeni tikili', 'Köhnə tikili', 'Həyət evi', 'Ofis', 'Qaraj', 'Obyekt', 'Torpaq']
+      },
+      city: String,
+      rooms: Number,
+      area: Number,
+      floor: Number,
+      totalFloors: Number,
+      additionalInfo: String,
+      price: Number,
+      repairStatus: {
+        type: String,
+        enum: ['təmirli', 'təmirsiz', '']
+      },
+      hasExtract: { type: Boolean, default: false },
+      hasMortgage: { type: Boolean, default: false },
+      rentTypeMonthly: { type: Boolean, default: false },
+      rentTypeDaily: { type: Boolean, default: false },
+      favoritedAt: { type: Date, default: Date.now }
+    }
+  ],
+  default: []
+}
+,
   createdAt: { type: Date, default: Date.now }
 });
 
