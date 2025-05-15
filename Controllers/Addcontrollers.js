@@ -136,7 +136,7 @@ export const addFavorite = async (req, res) => {
     const ad = await Listing.findById(id);
     if (!ad) return res.status(404).send({ message: "Elan tapılmadı" });
 
-    const alreadyFavorited = ad.favorites.find(fav => fav.email === ad.email);
+    const alreadyFavorited = ad.favorites.find(fav => fav.email === email);
     if (!alreadyFavorited) {
       ad.favorites.push({
         region: ad.region,
