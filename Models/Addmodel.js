@@ -60,7 +60,7 @@ const listingSchema = new mongoose.Schema({
     price: Number,
     repairStatus: {
       type: String,
-      enum: ['temirli', 'temirsiz', '']
+      enum: ['təmirli', 'təmirsiz', '']
     },
     hasExtract: { type: Boolean, default: false },
     hasMortgage: { type: Boolean, default: false },
