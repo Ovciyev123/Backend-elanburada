@@ -146,7 +146,7 @@ export const addFavorite = async (req, res) => {
         images: ad.images,
         name: ad.name,
         isAgent: ad.isAgent,
-        email: ad.email,
+        email: email,
         phone: ad.phone,
         dealType: ad.dealType,
         category: ad.category,
