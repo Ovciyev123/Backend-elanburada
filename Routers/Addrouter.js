@@ -1,12 +1,12 @@
 import express from "express";
-import { 
-  CreateAd, 
-  getAdByEmail, 
-  getAdById, 
-  getAllAds, 
-  addFavorite, 
-  removeFavorite, 
-  getUserFavorites 
+import {
+  CreateAd,
+  getAdByEmail,
+  getAdById,
+  getAllAds,
+  addFavorite,
+  removeFavorite,
+  getUserFavorites
 } from "../Controllers/Addcontrollers.js";
 import upload from "../Middlewares/FileUpload.js";
 import Listing from "../Models/Addmodel.js";
@@ -85,17 +85,23 @@ addRouter.get('/filters', async (req, res) => {
     if (filters.rentTypeMonthly === 'true') query.rentTypeMonthly = true;
     if (filters.rentTypeDaily === 'true') query.rentTypeDaily = true;
 
-    // İstəyə bağlı əlavə filterlər, məsələn, mərtəbə ilə bağlı
-    if (filters.firstFloor === 'true') query.floor = 1;
-    if (filters.exclude1stFloor === 'true') query.floor = { $ne: 1 };
-    if (filters.onlyTop === 'true' && filters.totalFloors) {
+    // Mərtəbə üzrə filterlər
+    if (filters.onlyTop === 'true') {
+      // Ən üst mərtəbə → floor === totalFloors
       query.$expr = { $eq: ['$floor', '$totalFloors'] };
-    }
-    if (filters.notTop === 'true' && filters.totalFloors) {
-      query.$expr = { $lt: ['$floor', '$totalFloors'] };
+    } else if (filters.notTop === 'true') {
+      // Ən üst mərtəbə olmasın → floor !== totalFloors
+      query.$expr = { $ne: ['$floor', '$totalFloors'] };
+    } else if (filters.firstFloor === 'true') {
+      // Yalnız 1-ci mərtəbə
+      query.floor = 1;
+    } else if (filters.exclude1stFloor === 'true') {
+      // 1-ci mərtəbə istisna olmaqla
+      query.floor = { $ne: 1 };
     }
 
-     if (filters.floorMin || filters.floorMax) {
+
+    if (filters.floorMin || filters.floorMax) {
       query.floor = query.floor || {}; // Əgər əvvəldən floor varsa onu obyektə çevir
       if (filters.floorMin) query.floor.$gte = Number(filters.floorMin);
       if (filters.floorMax) query.floor.$lte = Number(filters.floorMax);
