@@ -85,12 +85,20 @@ addRouter.get('/filters', async (req, res) => {
     if (filters.rentTypeMonthly === 'true') query.rentTypeMonthly = true;
     if (filters.rentTypeDaily === 'true') query.rentTypeDaily = true;
     // Mərtəbə filterləri (adları frontend-lə uyğunlaşdırılıb)
-    if (filters.onlyTopFloor === true) {
+    if (filters.onlyTopFloor === 'true') {
+      // floor = totalFloors
       query.$expr = { $eq: ['$floor', '$totalFloors'] };
-    } else if (filters.excludeTopFloor === true) {
-      query.$expr = { $ne: ['$floor', '$totalFloors'] };
-    } else if (filters.exclude1stFloor === true) {
-      query.floor = { $ne: 1 };
+    } else {
+      // "Ən üst mərtəbə olmamalı"
+      if (filters.excludeTopFloor === 'true') {
+        query.$expr = { $ne: ['$floor', '$totalFloors'] };
+      }
+
+      // "1-ci mərtəbə olmamalı"
+      if (filters.exclude1stFloor === 'true') {
+        if (!query.floor) query.floor = {};
+        query.floor.$ne = 1;
+      }
     }
 
 
