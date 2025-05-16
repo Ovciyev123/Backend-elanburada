@@ -95,6 +95,12 @@ addRouter.get('/filters', async (req, res) => {
       query.$expr = { $lt: ['$floor', '$totalFloors'] };
     }
 
+     if (filters.floorMin || filters.floorMax) {
+      query.floor = query.floor || {}; // Əgər əvvəldən floor varsa onu obyektə çevir
+      if (filters.floorMin) query.floor.$gte = Number(filters.floorMin);
+      if (filters.floorMax) query.floor.$lte = Number(filters.floorMax);
+    }
+
     console.log("Mongo query:", query);
 
     const listings = await Listing.find(query).sort({ createdAt: -1 });
