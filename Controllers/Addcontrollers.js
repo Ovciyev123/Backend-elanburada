@@ -134,6 +134,9 @@ export const addFavorite = async (req, res) => {
 
   const {email}=req.body
 
+  console.log(email);
+  
+
   try {
     const ad = await Listing.findById(id);
     if (!ad) return res.status(404).send({ message: "Elan tapılmadı" });
