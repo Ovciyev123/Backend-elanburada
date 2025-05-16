@@ -84,21 +84,15 @@ addRouter.get('/filters', async (req, res) => {
     if (filters.hasMortgage === 'true') query.hasMortgage = true;
     if (filters.rentTypeMonthly === 'true') query.rentTypeMonthly = true;
     if (filters.rentTypeDaily === 'true') query.rentTypeDaily = true;
-
-    // Mərtəbə üzrə filterlər
-    if (filters.onlyTop === 'true') {
-      // Ən üst mərtəbə → floor === totalFloors
+    // Mərtəbə filterləri (adları frontend-lə uyğunlaşdırılıb)
+    if (filters.onlyTopFloor === true) {
       query.$expr = { $eq: ['$floor', '$totalFloors'] };
-    } else if (filters.notTop === 'true') {
-      // Ən üst mərtəbə olmasın → floor !== totalFloors
+    } else if (filters.excludeTopFloor === true) {
       query.$expr = { $ne: ['$floor', '$totalFloors'] };
-    } else if (filters.firstFloor === 'true') {
-      // Yalnız 1-ci mərtəbə
-      query.floor = 1;
-    } else if (filters.exclude1stFloor === 'true') {
-      // 1-ci mərtəbə istisna olmaqla
+    } else if (filters.exclude1stFloor === true) {
       query.floor = { $ne: 1 };
     }
+
 
 
     if (filters.floorMin || filters.floorMax) {
