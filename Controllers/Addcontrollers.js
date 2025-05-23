@@ -212,6 +212,42 @@ export const getUserFavorites = async (req, res) => {
     res.status(500).json({ message: "Server hatası" });
   }
 };
+// 9. Təsdiqlənməmiş (pending) elanları gətir
+export const getPendingAds = async (req, res) => {
+  try {
+    const pendingAds = await Listing.find({ status: 'pending' }).sort({ createdAt: -1 });
+    res.status(200).json(pendingAds);
+  } catch (error) {
+    console.error("Pending elanlar gətirilərkən xəta:", error);
+    res.status(500).json({ message: "Server xətası", error: error.message });
+  }
+};
+// 10. Elan statusunu yenilə (məsələn: approved, rejected)
+export const updateAdStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!["approved", "rejected", "pending"].includes(status)) {
+      return res.status(400).json({ message: "Yanlış status dəyəri" });
+    }
+
+    const updatedAd = await Listing.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedAd) {
+      return res.status(404).json({ message: "Elan tapılmadı" });
+    }
+
+    res.status(200).json({ message: "Status yeniləndi", ad: updatedAd });
+  } catch (error) {
+    console.error("Status yenilənərkən xəta:", error);
+    res.status(500).json({ message: "Server xətası", error: error.message });
+  }
+};
 
 // 8. Tüm Favorileri Temizle
 export const clearFavorites = async (req, res) => {
