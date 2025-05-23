@@ -28,7 +28,8 @@ export const CreateAd = async (req, res) => {
       hasMortgage,
       rentTypeMonthly,
       rentTypeDaily,
-      isAgent
+      isAgent,
+      status
     } = req.body;
 
     // Bütün gerekli alanların doğrulaması
@@ -72,6 +73,7 @@ export const CreateAd = async (req, res) => {
       rentTypeMonthly,
       rentTypeDaily,
       isAgent,
+      status,
       createdAt: new Date()
     });
 
