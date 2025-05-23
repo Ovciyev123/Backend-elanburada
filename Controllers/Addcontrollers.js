@@ -214,6 +214,27 @@ export const getUserFavorites = async (req, res) => {
     res.status(500).json({ message: "Server hatası" });
   }
 };
+
+// 11. Elanı redaktə et (Admin tərəfindən)
+export const editAdById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedFields = req.body;
+
+    // Elanı tapıb güncəlləyirik
+    const updatedAd = await Listing.findByIdAndUpdate(id, updatedFields, { new: true });
+
+    if (!updatedAd) {
+      return res.status(404).json({ message: "Elan tapılmadı" });
+    }
+
+    res.status(200).json({ message: "Elan uğurla redaktə edildi", ad: updatedAd });
+  } catch (error) {
+    console.error("Elan redaktə edilərkən xəta:", error);
+    res.status(500).json({ message: "Server xətası", error: error.message });
+  }
+};
+
 // 9. Təsdiqlənməmiş (pending) elanları gətir
 export const getPendingAds = async (req, res) => {
   try {
