@@ -87,16 +87,16 @@ addRouter.get('/filters', async (req, res) => {
     // Boolean filterlər (string olaraq 'true' gəldiyinə görə yoxlanılır)
     if (filters.hasExtract === 'true') query.hasExtract = true;
     if (filters.hasMortgage === 'true') query.hasMortgage = true;
- // Boolean filterlər
-if (filters.rentTypeMonthly === 'true' && filters.rentTypeDaily === 'true') {
-  query.$or = [
-    { rentTypeMonthly: true },
-    { rentTypeDaily: true }
-  ];
-} else {
-  if (filters.rentTypeMonthly === 'true') query.rentTypeMonthly = true;
-  if (filters.rentTypeDaily === 'true') query.rentTypeDaily = true;
-}
+    // Boolean filterlər
+    if (filters.rentTypeMonthly === 'true' && filters.rentTypeDaily === 'true') {
+      query.$or = [
+        { rentTypeMonthly: true },
+        { rentTypeDaily: true }
+      ];
+    } else {
+      if (filters.rentTypeMonthly === 'true') query.rentTypeMonthly = true;
+      if (filters.rentTypeDaily === 'true') query.rentTypeDaily = true;
+    }
 
 
     // Mərtəbə filterləri (adları frontend-lə uyğunlaşdırılıb)
@@ -123,6 +123,14 @@ if (filters.rentTypeMonthly === 'true' && filters.rentTypeDaily === 'true') {
       if (filters.floorMin) query.floor.$gte = Number(filters.floorMin);
       if (filters.floorMax) query.floor.$lte = Number(filters.floorMax);
     }
+
+    // Default olaraq yalnız approved elanları göstər
+    if (!filters.status) {
+      query.status = "approved";
+    } else {
+      query.status = filters.status;
+    }
+
 
     console.log("Mongo query:", query);
 
