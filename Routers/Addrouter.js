@@ -8,7 +8,8 @@ import {
   removeFavorite,
   getUserFavorites,
   getPendingAds,
-  updateAdStatus
+  updateAdStatus,
+  editAdById
 } from "../Controllers/Addcontrollers.js";
 import upload from "../Middlewares/FileUpload.js";
 import Listing from "../Models/Addmodel.js";
@@ -18,7 +19,7 @@ const addRouter = express.Router();
 // Elan yaratma
 addRouter.get("/ads/pending", getPendingAds);
 addRouter.patch("/ads/:id", updateAdStatus);
-
+addRouter.patch("/edit/:id", editAdById); // Admin Elan Redaktəsi
 addRouter.post("/", upload.array("images", 15), CreateAd);
 
 // Bütün elanları gətir
