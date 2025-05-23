@@ -46,11 +46,13 @@ import { messagerouter } from "./Routers/Messagerouter.js";
 import { conversationrouter } from "./Routers/Conversationrouter.js";
 import { initializeSocket } from "./Routers/Socketrouter.js";
 import profilerouter from "./Routers/profilerouter.js";
+import { adminrouter } from "./Routers/AdminAuthRouter.js";
 
 
 // API endpoint-lər
 app.use("/tacstyle/auth", authrouter);
 app.use("/api/ads", addRouter);
+app.use("/api/admin",adminrouter);
 app.use("/api/conversations", conversationrouter);
 app.use("/api/messages", messagerouter);
 app.use("/api/profile", profilerouter);
