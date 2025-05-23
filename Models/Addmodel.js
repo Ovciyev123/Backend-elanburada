@@ -15,6 +15,11 @@ const listingSchema = new mongoose.Schema({
     enum: ['Alış', 'Kirayə'],
     required: true
   },
+  status: {
+  type: String,
+  enum: ['pending', 'approved', 'rejected'],
+  default: 'pending'
+},
   category: {
     type: String,
     enum: ['Yeni tikili', 'Köhnə tikili', 'Həyət evi', 'Ofis', 'Qaraj', 'Obyekt', 'Torpaq'],

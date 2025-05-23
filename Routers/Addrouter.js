@@ -6,7 +6,9 @@ import {
   getAllAds,
   addFavorite,
   removeFavorite,
-  getUserFavorites
+  getUserFavorites,
+  getPendingAds,
+  updateAdStatus
 } from "../Controllers/Addcontrollers.js";
 import upload from "../Middlewares/FileUpload.js";
 import Listing from "../Models/Addmodel.js";
@@ -14,6 +16,9 @@ import Listing from "../Models/Addmodel.js";
 const addRouter = express.Router();
 
 // Elan yaratma
+addRouter.get("/ads/pending", getPendingAds);
+addRouter.patch("/ads/:id", updateAdStatus);
+
 addRouter.post("/", upload.array("images", 15), CreateAd);
 
 // Bütün elanları gətir
