@@ -14,9 +14,6 @@ const MessageSchema = new Schema(
       type: String,
       default: "",
     },
-    read: { type: Boolean, default: false },
-    receiverId: { type: String, required: true },
-
   },
   { timestamps: true } // Timestamps əlavə olunur
 );
