@@ -12,3 +12,4 @@ messagerouter.post("/",Messagecontrollers.Messagepost)
 messagerouter.get("/:conversationId",Messagecontrollers.getMessage)
 
 messagerouter.get("/unread-count/:email", Messagecontrollers.unreadCount);
+messagerouter.post('/mark-as-read', Messagecontrollers.markAsRead);

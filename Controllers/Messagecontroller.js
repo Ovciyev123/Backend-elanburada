@@ -39,6 +39,27 @@ export const Messagecontrollers={
             res.send({message:"error",error})
         }
     },
+    markAsRead: async (req, res) => {
+  try {
+    const { senderId, receiverEmail } = req.body;
+
+    const receiver = await UserProfile.findOne({ email: receiverEmail });
+    if (!receiver) return res.status(404).json({ message: "Receiver not found" });
+
+    await MessageModel.updateMany(
+      {
+        senderId,
+        receiverId: receiver._id.toString(),
+        read: false
+      },
+      { $set: { read: true } }
+    );
+
+    res.json({ message: "Messages marked as read" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+},
 unreadCount: async (req, res) => {
   try {
     const { email } = req.params;
