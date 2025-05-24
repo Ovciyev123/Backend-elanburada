@@ -5,22 +5,25 @@ import { MessageModel } from "../Models/messagemodel.js"
 
 export const Messagecontrollers={
 
-    Messagepost:async (req,res)=>{
-        try{ 
-       const {senderId,conversationId,content}=req.body
+    Messagepost: async (req, res) => {
+  try {
+    const { senderId, receiverId, conversationId, content } = req.body;
 
-       let newMessage=new MessageModel({senderId,conversationId,content})
+    const newMessage = new MessageModel({
+      senderId,
+      receiverId,
+      conversationId,
+      content,
+      read: false,
+    });
 
-       await newMessage.save()
+    await newMessage.save();
 
-       res.send({message:"successfully",data:newMessage})
-    
-    }catch(error){
-
-        res.send({message:"error",error})
-    }
-    },
-
+    res.send({ message: "successfully", data: newMessage });
+  } catch (error) {
+    res.send({ message: "error", error });
+  }
+},
     getMessage:async (req,res)=>{
 
         try{
@@ -34,5 +37,23 @@ export const Messagecontrollers={
 
             res.send({message:"error",error})
         }
-    }
+    },
+    unreadCount: async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const receiver = await UserModel.findOne({ email }); // ✅ Email ilə istifadəçi tap
+    if (!receiver) return res.status(404).json({ message: "User not found" });
+
+    const count = await MessageModel.countDocuments({
+      receiverId: receiver._id.toString(),
+      read: false,
+    });
+
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error });
+  }
+}
+
 }
