@@ -14,10 +14,17 @@ const MessageSchema = new Schema(
       type: String,
       default: "",
     },
-     receiverId:{ String}, 
-    read: { type: Boolean, default: false }, 
+    receiverId: {  // ✅ DÜZELTİLDİ
+      type: String,
+      required: true
+    },
+    read: {
+      type: Boolean,
+      default: false
+    },
   },
-  { timestamps: true } // Timestamps əlavə olunur
+  { timestamps: true }
 );
+
 
 export const MessageModel = model("Message", MessageSchema);
