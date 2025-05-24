@@ -38,16 +38,7 @@ export const socketEvents = (socket, io) => {
  socket.on("sendMessage", async ({ senderId, receiverId, content, conversationId }) => {
   console.log(`sendMessage event -> senderId: ${senderId}, receiverId: ${receiverId}, content: ${content}`);
 
-  // Mesajı DB-yə yaz
-  const newMessage = new MessageModel({
-    senderId,
-    receiverId,
-    conversationId,
-    content,
-    read: false,
-  });
 
-  await newMessage.save();
 
   const receiver = getUser(receiverId); // 🔄 receiverId olmalıdır burada
 
