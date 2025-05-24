@@ -33,17 +33,29 @@ export const socketEvents = (socket, io) => {
   });
 
   
-  socket.on("sendMessage", ({ senderId, receiverId, content }) => {
-    console.log(`sendMessage event -> senderId: ${senderId}, receiverId: ${receiverId}, content: ${content}`);
+ socket.on("sendMessage", async ({ senderId, receiverId, content, conversationId }) => {
+  console.log(`sendMessage event -> senderId: ${senderId}, receiverId: ${receiverId}, content: ${content}`);
 
-    const user = getUser(senderId);
-    if (user) {
-      console.log(`Mesaj iletiliyor -> receiver socketId: ${user.socketId}`);
-      io.to(user.socketId).emit("getMessage", { senderId, content });
-    } else {
-      console.error("Kullanıcı bulunamadı:", senderId);
-    }
+  // Mesajı DB-yə yaz
+  const newMessage = new MessageModel({
+    senderId,
+    receiverId,
+    conversationId,
+    content,
+    read: false,
   });
+
+  await newMessage.save();
+
+  const receiver = getUser(receiverId); // 🔄 receiverId olmalıdır burada
+
+  if (receiver) {
+    io.to(receiver.socketId).emit("getMessage", { senderId, content });
+  } else {
+    console.log("Qəbul edən online deyil, mesaj DB-də saxlandı.");
+  }
+});
+
 
 
   socket.on("disconnect", () => {
