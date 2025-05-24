@@ -1,4 +1,5 @@
 import { MessageModel } from "../Models/messagemodel.js"
+import UserProfile from "../Models/Profilemodel.js";
 
 
 
@@ -42,7 +43,7 @@ export const Messagecontrollers={
   try {
     const { email } = req.params;
 
-    const receiver = await UserModel.findOne({ email }); // ✅ Email ilə istifadəçi tap
+    const receiver = await UserProfile.findOne({ email }); // ✅ Email ilə istifadəçi tap
     if (!receiver) return res.status(404).json({ message: "User not found" });
 
     const count = await MessageModel.countDocuments({
