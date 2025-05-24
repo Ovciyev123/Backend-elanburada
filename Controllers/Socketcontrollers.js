@@ -1,3 +1,5 @@
+import { MessageModel } from "../Models/messagemodel.js";
+
 let users = [];
 
 export const socketEvents = (socket, io) => {
