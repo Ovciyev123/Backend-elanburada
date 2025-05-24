@@ -39,22 +39,37 @@ export const Messagecontrollers={
             res.send({message:"error",error})
         }
     },
-    unreadCount: async (req, res) => {
+unreadCount: async (req, res) => {
   try {
     const { email } = req.params;
 
-    const receiver = await UserProfile.findOne({ email }); // ✅ Email ilə istifadəçi tap
+    const receiver = await UserProfile.findOne({ email });
     if (!receiver) return res.status(404).json({ message: "User not found" });
 
-    const count = await MessageModel.countDocuments({
+    const unreadMessages = await MessageModel.find({
       receiverId: receiver._id.toString(),
       read: false,
     });
 
-    res.json({ count });
+    const totalCount = unreadMessages.length;
+
+    // Her senderId üçün count çıxar
+    const perSender = {};
+    unreadMessages.forEach(msg => {
+      const senderId = msg.senderId.toString();
+      perSender[senderId] = (perSender[senderId] || 0) + 1;
+    });
+
+    const perSenderArray = Object.entries(perSender).map(([senderId, count]) => ({
+      senderId,
+      count,
+    }));
+
+    res.json({ totalCount, perSender: perSenderArray });
   } catch (error) {
     res.status(500).json({ message: "Error", error });
   }
 }
+
 
 }
