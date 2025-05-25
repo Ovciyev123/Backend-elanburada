@@ -1,6 +1,6 @@
-
-import axios from "axios";
+import admin from "../firebaseAdmin.js";
 import FcmToken from "../Models/Fcmmodel.js";
+
 
 
 export const saveToken = async (req, res) => {
@@ -38,24 +38,22 @@ export const sendNotification = async (req, res) => {
       return res.status(404).json({ message: "Kullanıcı veya token bulunamadı" });
     }
 
-    const payload = {
-      to: user.token,
+    const message = {
+      token: user.token,
       notification: {
         title,
         body,
-        icon: "https://elanburada.az/logo192.png",
+      },
+      webpush: {
+        notification: {
+          icon: "https://elanburada.az/logo192.png",
+        },
       },
     };
 
-    await axios.post("https://fcm.googleapis.com/fcm/send", payload, {
-      headers: {
-        "Authorization": "BPgbeym1Y6brF9Op75pRwU4g3N1-J0cySQVfDiLbcVMOupNCUHLuQq1zOkCtyzoFfUr5JAaEPN5rajEg2uIbAX8", 
-        "Content-Type": "application/json",
-      },
-    });
+    await admin.messaging().send(message);
 
     res.json({ message: "Bildirim gönderildi" });
-
   } catch (error) {
     console.error("Bildirim gönderme hatası:", error);
     res.status(500).json({ message: "Sunucu hatası" });
