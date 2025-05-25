@@ -2,18 +2,18 @@ import jwt from 'jsonwebtoken';
 
 const adminSecretKey = "ADMIN_SECRET_KEY";
 
-// Statik admin məlumatları
+
 const STATIC_ADMIN = {
   username: "Feqan2005",
   email: "merdanovf45@gmail.com",
-  password: "feqan02082005" // sadə şifrə (realda bcrypt istifadə etməlisiniz)
+  password: "feqan02082005" 
 };
 
 export const AdminControllers = {
   login: async (req, res) => {
     const { email, username, password } = req.body;
 
-    // İstifadəçi doğru username və ya email + password göndəribsə
+  
     const isEmailValid = email === STATIC_ADMIN.email;
     const isUsernameValid = username === STATIC_ADMIN.username;
     const isPasswordValid = password === STATIC_ADMIN.password;

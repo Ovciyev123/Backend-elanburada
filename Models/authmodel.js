@@ -24,6 +24,7 @@ const AuthSchema = new Schema(
       type: String,
       required: false,
     },
+    fcmToken: { type: String },
   },
   { timestamps: true }
 );
