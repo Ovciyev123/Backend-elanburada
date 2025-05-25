@@ -2,6 +2,7 @@
 import axios from "axios";
 import FcmToken from "../Models/Fcmmodel.js";
 
+
 export const saveToken = async (req, res) => {
   try {
     const { email, token } = req.body;

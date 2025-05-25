@@ -1,5 +1,6 @@
 import express from "express";
-import { saveToken, sendNotification } from "../controllers/fcmtoken.controller.js";
+import { saveToken, sendNotification } from "../Controllers/Fcmcontrollers.js";
+
 
 const fcmrouter = express.Router();
 
