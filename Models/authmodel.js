@@ -23,8 +23,7 @@ const AuthSchema = new Schema(
     profileImage: {
       type: String,
       required: false,
-    },
-    fcmToken: { type: String },
+    }
   },
   { timestamps: true }
 );
