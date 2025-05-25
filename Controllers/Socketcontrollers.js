@@ -1,6 +1,7 @@
 import { MessageModel } from "../Models/messagemodel.js";
-import { sendNotificationToEmail } from "../utils/fcm.js";
+
 import Profile from "../Models/Profile.js";
+import { sendNotificationToEmail } from "../Utils/fcm.js";
 
 let users = [];
 
