@@ -38,11 +38,11 @@ export const AdminControllers = {
       });
     }
 
-    return res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials please correct info!" });
   },
 
   getAllAdmins: async (req, res) => {
-    // Yalnız bir admin olduğu üçün onu qaytarırıq
+   
     res.json([
       {
         username: STATIC_ADMIN.username,
