@@ -1,6 +1,5 @@
 import { MessageModel } from "../Models/messagemodel.js";
-
-import Profile from "../Models/Profile.js";
+import UserProfile from "../Models/Profilemodel.js";
 import { sendNotificationToEmail } from "../Utils/fcm.js";
 
 let users = [];
@@ -61,7 +60,7 @@ export const socketEvents = (socket, io) => {
       }
 
       // 3. Alıcının email'ini al ve FCM bildirimi gönder
-      const receiverProfile = await Profile.findById(receiverId);
+      const receiverProfile = await UserProfile.findById(receiverId);
       if (receiverProfile?.email) {
         await sendNotificationToEmail(receiverProfile.email, "Yeni Mesaj", content);
       }
