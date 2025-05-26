@@ -1,6 +1,16 @@
 import UserProfile from "../Models/Profilemodel.js";
 
 
+const checkBlockExpiry = async (user) => {
+  if (user.isBlocked && user.blockUntil && new Date(user.blockUntil) < new Date()) {
+    user.isBlocked = false;
+    user.blockUntil = null;
+    await user.save();
+  }
+  return user;
+};
+
+
 export const createUserProfile = async (req, res) => {
   try {
     const {
@@ -34,21 +44,27 @@ export const createUserProfile = async (req, res) => {
   }
 };
 
-
 export const getAllUserProfiles = async (req, res) => {
   try {
-    const profiles = await UserProfile.find();
-    res.status(200).json(profiles);
+    let profiles = await UserProfile.find();
+
+   
+    const checkedProfiles = await Promise.all(profiles.map(checkBlockExpiry));
+
+    res.status(200).json(checkedProfiles);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+
 export const getUserProfileById = async (req, res) => {
   try {
-    // userId yerine _id'ye göre arama yapıyoruz
-    const profile = await UserProfile.findById(req.params.id);
+    let profile = await UserProfile.findById(req.params.id);
     if (!profile) return res.status(404).json({ message: 'Profil tapılmadı' });
+
+    profile = await checkBlockExpiry(profile);
+
     res.status(200).json(profile);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -61,7 +77,7 @@ export const getUserProfileByEmail = async (req, res) => {
   const { email } = req.params;
 
   try {
-    const profile = await UserProfile.findOne({
+    let profile = await UserProfile.findOne({
       email: new RegExp('^' + email + '$', 'i'),
     });
 
@@ -69,12 +85,15 @@ export const getUserProfileByEmail = async (req, res) => {
       return res.status(404).json({ message: 'Profil tapılmadı' });
     }
 
+    profile = await checkBlockExpiry(profile);
+
     return res.status(200).json(profile);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server xətası' });
   }
 };
+
 
 
 export const updateUserProfile = async (req, res) => {
@@ -114,6 +133,49 @@ export const deleteUserProfile = async (req, res) => {
     }
   }
 
+export const blockUser = async (req, res) => {
+  const { email, blockType, until } = req.body;
+
+  if (!email || !blockType) {
+    return res.status(400).json({ message: "Email və block növü tələb olunur." });
+  }
+
+  try {
+    const user = await UserProfile.findOne({ email: new RegExp('^' + email + '$', 'i') });
+
+    if (!user) {
+      return res.status(404).json({ message: "İstifadəçi tapılmadı." });
+    }
+
+    if (blockType === 'permanent') {
+      user.isBlocked = true;
+      user.blockUntil = null;
+    } else if (blockType === 'timed') {
+      if (!until) {
+        return res.status(400).json({ message: "Vaxt daxil edilməyib." });
+      }
+
+      const untilDate = new Date(until);
+      if (isNaN(untilDate.getTime())) {
+        return res.status(400).json({ message: "Yanlış tarix formatı." });
+      }
+
+      user.isBlocked = true;
+      user.blockUntil = untilDate;
+    } else if (blockType === 'unblock') {
+      user.isBlocked = false;
+      user.blockUntil = null;
+    } else {
+      return res.status(400).json({ message: "Yanlış blockType dəyəri." });
+    }
+
+    await user.save();
+    return res.status(200).json({ message: "Əməliyyat uğurla yerinə yetirildi." });
+  } catch (error) {
+    console.error("Bloklama zamanı xəta:", error);
+    return res.status(500).json({ message: "Server xətası." });
+  }
+};
 
 
 
