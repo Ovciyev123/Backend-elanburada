@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
+import UserProfile from '../Models/Profilemodel.js';
 import nodemailer from "nodemailer"
 const secretkey="SECRETKEY"
 
@@ -13,6 +14,16 @@ const transporter = nodemailer.createTransport({
       pass: "unjw gxpo ffnw pung",
     },
   });
+
+
+  const checkBlockExpiry = async (user) => {
+  if (user.isBlocked && user.blockUntil && new Date(user.blockUntil) < new Date()) {
+    user.isBlocked = false;
+    user.blockUntil = null;
+    await user.save();
+  }
+  return user;
+};
 
 
 export const Authcontrollers = {
@@ -81,38 +92,49 @@ export const Authcontrollers = {
     }
   },
   
-   login : async (req, res) => {
-    const { email, password } = req.body;
+ login: async (req, res) => {
+  const { email, password } = req.body;
 
-    const user = await AuthModel.findOne({ email });
+  const user = await AuthModel.findOne({ email });
+  if (!user) {
+    return res.send({ message: 'Email incorrect' });
+  }
 
-   
+  const isTruePassword = await bcrypt.compare(password, user.password);
+  if (!isTruePassword) {
+    return res.send({ message: "Password incorrect" });
+  }
 
-    if (!user) {
-        return res.send({ message: 'Email incorrect' });
+  // 💡 Profilə görə blok statusunu yoxla
+  const userProfile = await UserProfile.findOne({ email });
+  if (userProfile) {
+    await checkBlockExpiry(userProfile); // vaxtı keçibsə, blokdan çıxarır
+
+    if (userProfile.isBlocked) {
+      // Əgər blokdadırsa, girişə icazə vermə
+      const untilText = userProfile.blockUntil
+        ? `Blok ${new Date(userProfile.blockUntil).toLocaleString()} tarixinə qədər aktivdir.`
+        : "Bu istifadəçi həmişəlik bloklanıb.";
+
+      return res.status(403).json({ message: `Profil bloklanıb. ${untilText}` });
     }
+  }
 
-    const isTruePassword = await bcrypt.compare(password, user.password);
+  // Giriş təsdiqləmə kodu ilə davam et
+  let confirmcode = Math.floor(Math.random() * 999999);
+  user.confirmpassword = confirmcode;
+  await user.save();
 
-    if (!isTruePassword) {
-        return res.send({ message: "Password incorrect" });
-    }
+  await transporter.sendMail({
+    from: "rvbrgbgrbrbrbgrbrggrbrgb@gmail.com",
+    to: user.email,
+    subject: "Confirmation Code",
+    html: `<b>Bu Sizin Confirm Kodunuzdur: ${confirmcode}</b>`,
+  });
 
-    let confirmcode = Math.floor(Math.random() * 999999);
-    console.log("random" + confirmcode)
-    user.confirmpassword = confirmcode;
-    console.log(user.confirmpassword)
-    await user.save();
-    
-    await transporter.sendMail({
-        from: "rvbrgbgrbrbrbgrbrggrbrgb@gmail.com", 
-        to: user.email, 
-        subject: "Confirmation Code", 
-        html: `<b>Bu Sizin Confirm Kodunuzdur: ${confirmcode}</b>`, 
-    });
+  res.send({ message: "Confirmation code sent to email" });
+},
 
-    res.send({ message: "Confirmation code sent to email" });
-  },
 
   confirm: async (req, res) => {
    

@@ -18,6 +18,15 @@ const userProfileSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
+  isBlocked: {
+  type: Boolean,
+  default: false
+},
+blockUntil: {
+  type: Date,
+  default: null
+},
+
   email: {
     type: String,
     required: true,

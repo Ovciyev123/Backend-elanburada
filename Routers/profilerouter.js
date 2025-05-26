@@ -7,7 +7,8 @@ import {
     updateUserProfile,
     getUserProfileByEmail, // Yeni controller funksiyası
     getUserProfileById,
-    ChatProfiles
+    ChatProfiles,
+    blockUser
 } from '../Controllers/profilecontroller.js';
 import upload from '../Middlewares/FileUpload.js';
 
@@ -21,5 +22,6 @@ profilerouter.get('/user/:id', getUserProfileById);
 profilerouter.put('/:id', updateUserProfile);
 profilerouter.delete('/:id', deleteUserProfile);
 profilerouter.post("/chatprofile",ChatProfiles)
+profilerouter.post('/block', blockUser);
 
 export default profilerouter;
