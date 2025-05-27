@@ -156,6 +156,8 @@ export const blockUser = async (req, res) => {
       }
 
       const untilDate = new Date(until);
+      console.log("Gələn tarix:", until, "Yaradılan tarix obyekt:", untilDate);
+
       if (isNaN(untilDate.getTime())) {
         return res.status(400).json({ message: "Yanlış tarix formatı." });
       }
