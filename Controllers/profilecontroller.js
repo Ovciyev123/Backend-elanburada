@@ -54,8 +54,11 @@ export const getAllUserProfiles = async (req, res) => {
     let profiles = await UserProfile.find();
 
    
-    const checkedProfiles = await Promise.all(profiles.map(checkBlockExpiry));
-
+  const checkedProfiles = await Promise.all(profiles.map(async (user) => {
+  const now = new Date();
+  console.log(`[${user.email}] now: ${now.toISOString()}, blockUntil: ${user.blockUntil}`);
+  return await checkBlockExpiry(user);
+}));
     res.status(200).json(checkedProfiles);
   } catch (error) {
     res.status(500).json({ message: error.message });
