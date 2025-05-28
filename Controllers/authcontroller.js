@@ -16,14 +16,19 @@ const transporter = nodemailer.createTransport({
   });
 
 
-  const checkBlockExpiry = async (user) => {
-  if (user.isBlocked && user.blockUntil && new Date(user.blockUntil) < new Date()) {
+ const checkBlockExpiry = async (user) => {
+  const now = new Date().getTime(); // UTC time in ms
+  const blockEnd = new Date(user.blockUntil).getTime();
+
+  if (user.isBlocked && user.blockUntil && blockEnd < now) {
     user.isBlocked = false;
     user.blockUntil = null;
     await user.save();
   }
+
   return user;
 };
+
 
 
 export const Authcontrollers = {
