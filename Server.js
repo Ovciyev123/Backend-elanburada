@@ -9,6 +9,7 @@ app.use("/uploads", express.static("uploads"));
 const allowedOrigins = [
   'http://localhost:5173',
   'https://frontend-elanburada0802.vercel.app'
+  ,'https://evburada.site'
 ];
 
 app.use(cors({
@@ -30,7 +31,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ['https://frontend-elanburada0802.vercel.app', 'http://localhost:5173'],
+    origin: ['https://frontend-elanburada0802.vercel.app', 'http://localhost:5173','https://evburada.site'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
