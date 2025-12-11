@@ -2,26 +2,17 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
-import SibApiV3Sdk from "@sendinblue/client";
+import Brevo from "brevo";
 const secretKey = "SECRETKEY";
 
 
 
-function getBrevoClient() {
-  const apiKey = process.env.BREVO_API_KEY;
 
-  if (!apiKey) {
-    console.error("❌ BREVO_API_KEY tapılmadı!");
-    return null;
-  }
-
-  const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-
-  // 🔥 DƏYİŞİKLİK BURADA! — DÜZGÜN SİNTAKS
-  emailApi.setApiKey("api-key", apiKey);
-
-  return emailApi;
-}
+const emailApi = new Brevo.TransactionalEmailsApi();
+emailApi.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 
 export const Authcontrollers = {
@@ -69,7 +60,7 @@ export const Authcontrollers = {
 
 
 
- login: async (req, res) => {
+  login: async (req, res) => {
     try {
       const { email, password } = req.body;
 
@@ -98,19 +89,13 @@ export const Authcontrollers = {
       await user.save();
 
 
-      // 🔥 BURADA EMAIL CLIENT YARADILIR
-      const emailApi = getBrevoClient();
-      if (!emailApi) {
-        return res.status(500).json({ message: "Email service not available" });
-      }
+     await emailApi.sendTransacEmail({
+  sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
+  to: [{ email: user.email }],
+  subject: "Təsdiq Kodunuz",
+  htmlContent: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
+});
 
-      // 🔥 BREVO EMAIL GÖNDƏRİŞ
-      await emailApi.sendTransacEmail({
-        sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
-        to: [{ email: user.email }],
-        subject: "Təsdiq Kodunuz",
-        htmlContent: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
-      });
 
       return res.json({ message: "Confirmation code sent to email" });
 
