@@ -2,15 +2,19 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
-import SibApiV3Sdk from "sib-api-v3-sdk";
+import Brevo from "brevo";
 const secretKey = "SECRETKEY";
+// Yeni API instance
+const apiInstance = new Brevo.TransactionalEmailsApi();
+
+// API KEY təyin et
+apiInstance.setApiKey(
+  Brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 
 
-const brevoClient = SibApiV3Sdk.ApiClient.instance;
-brevoClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 
 export const Authcontrollers = {
@@ -88,7 +92,7 @@ export const Authcontrollers = {
       user.confirmpassword = otp;
       await user.save();
 
-   await emailApi.sendTransacEmail({
+  await apiInstance.sendTransacEmail({
   sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
   to: [{ email: user.email }],
   subject: "Təsdiq Kodunuz",

@@ -72,6 +72,9 @@ app.use("/api/conversations", conversationrouter);
 app.use("/api/messages", messagerouter);
 app.use("/api/profile", profilerouter);
 
+console.log("🔑 BREVO_API_KEY:", process.env.BREVO_API_KEY);
+console.log("🔑 LENGTH:", (process.env.BREVO_API_KEY || "").length);
+
 
 // Socket.io Init
 initializeSocket(io);
