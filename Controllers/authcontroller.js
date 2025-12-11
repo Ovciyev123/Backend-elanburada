@@ -2,16 +2,15 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
-import Brevo from "brevo";
+import SibApiV3Sdk from "@sendinblue/client";
+
 
 const secretKey = "SECRETKEY";
 
-const emailApi = new Brevo.TransactionalEmailsApi();
-emailApi.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+const brevoClient = SibApiV3Sdk.ApiClient.instance;
+brevoClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
-
-
-
+const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const Authcontrollers = {
 
