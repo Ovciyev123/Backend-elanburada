@@ -3,14 +3,17 @@ import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
 import SibApiV3Sdk from "@sendinblue/client";
-
-
 const secretKey = "SECRETKEY";
 
-const brevoClient = SibApiV3Sdk.ApiClient.instance;
-brevoClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+
 
 const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+emailApi.setApiKey(
+  SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+
 
 export const Authcontrollers = {
 
@@ -87,7 +90,7 @@ export const Authcontrollers = {
       user.confirmpassword = otp;
       await user.save();
 
- await emailApi.sendTransacEmail({
+await brevoClient.sendTransacEmail({
   sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
   to: [{ email: user.email }],
   subject: "Təsdiq Kodunuz",
