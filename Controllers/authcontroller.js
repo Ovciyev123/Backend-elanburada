@@ -16,10 +16,9 @@ function getBrevoClient() {
   }
 
   const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-  emailApi.setApiKey(
-    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
-    apiKey
-  );
+
+  // 🔥 DƏYİŞİKLİK BURADA! — DÜZGÜN SİNTAKS
+  emailApi.setApiKey("api-key", apiKey);
 
   return emailApi;
 }
@@ -70,56 +69,56 @@ export const Authcontrollers = {
 
 
 
-login: async (req, res) => {
-  try {
-    const { email, password } = req.body;
+ login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
 
-    const user = await AuthModel.findOne({ email });
+      const user = await AuthModel.findOne({ email });
+      if (!user) return res.send({ message: "Email incorrect" });
 
-    if (!user) return res.send({ message: "Email incorrect" });
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) return res.send({ message: "Password incorrect" });
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.send({ message: "Password incorrect" });
+      const profile = await UserProfile.findOne({ email });
 
-    const profile = await UserProfile.findOne({ email });
+      if (profile) {
+        if (profile.isBlocked && Date.now() > new Date(profile.blockUntil)) {
+          profile.isBlocked = false;
+          profile.blockUntil = null;
+          await profile.save();
+        }
 
-    if (profile) {
-      if (profile.isBlocked && Date.now() > new Date(profile.blockUntil)) {
-        profile.isBlocked = false;
-        profile.blockUntil = null;
-        await profile.save();
+        if (profile.isBlocked) {
+          return res.status(403).json({ message: "Profil bloklanıb" });
+        }
       }
 
-      if (profile.isBlocked) {
-        return res.status(403).json({ message: "Profil bloklanıb" });
+      let otp = Math.floor(100000 + Math.random() * 900000);
+      user.confirmpassword = otp;
+      await user.save();
+
+
+      // 🔥 BURADA EMAIL CLIENT YARADILIR
+      const emailApi = getBrevoClient();
+      if (!emailApi) {
+        return res.status(500).json({ message: "Email service not available" });
       }
+
+      // 🔥 BREVO EMAIL GÖNDƏRİŞ
+      await emailApi.sendTransacEmail({
+        sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
+        to: [{ email: user.email }],
+        subject: "Təsdiq Kodunuz",
+        htmlContent: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
+      });
+
+      return res.json({ message: "Confirmation code sent to email" });
+
+    } catch (err) {
+      console.log("LOGIN ERROR →", err);
+      return res.status(500).json({ message: "Server error" });
     }
-
-    let otp = Math.floor(100000 + Math.random() * 900000);
-    user.confirmpassword = otp;
-    await user.save();
-
-    // 🔥 BURADA emailApi yaratmalısan!
-    const emailApi = getBrevoClient();
-    if (!emailApi) {
-      console.error("Email API not initialized!");
-      return res.status(500).json({ message: "Email service not available" });
-    }
-
-    await emailApi.sendTransacEmail({
-      sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
-      to: [{ email: user.email }],
-      subject: "Təsdiq Kodunuz",
-      htmlContent: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
-    });
-
-    return res.json({ message: "Confirmation code sent to email" });
-
-  } catch (err) {
-    console.log("LOGIN ERROR →", err);
-    return res.status(500).json({ message: "Server error" });
-  }
-},
+  },
 
 
 
