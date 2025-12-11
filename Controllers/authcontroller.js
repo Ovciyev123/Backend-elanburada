@@ -88,7 +88,7 @@ export const Authcontrollers = {
       from: "ElanBurada <onboarding@resend.dev>",
         to: user.email,
         subject: "Təsdiq Kodunuz",
-        html: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
+        html: `<h1>${confirmcode}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
       });
 
 
