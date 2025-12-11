@@ -7,18 +7,18 @@ import nodemailer from "nodemailer";
 const secretKey = "SECRETKEY";
 
 const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: "9ddb11001@smtp-brevo.com",
-      pass: "xsmtpsib-9668ec095153888ea13ce4b5a5a8975248ef00cbd76d18b5c0cadffb3b568cef-rTZ9ju3VHt7UKToD",
-    }
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.BREVO_USER,
+    pass: process.env.BREVO_PASS,
+  }
 });
 
 export const Authcontrollers = {
 
-  register : async (req, res) => {
+  register: async (req, res) => {
     try {
       const { username, email, password } = req.body;
 
@@ -61,7 +61,7 @@ export const Authcontrollers = {
 
 
 
-  login : async (req, res) => {
+  login: async (req, res) => {
     try {
       const { email, password } = req.body;
 
@@ -92,7 +92,7 @@ export const Authcontrollers = {
       await user.save();
 
       await transporter.sendMail({
-        from: "9ddb11001@smtp-brevo.com",
+        from: process.env.BREVO_USER,
         to: user.email,
         subject: "Confirmation Code",
         html: `<b>Bu sizin təsdiq kodunuzdur: ${otp}</b>`,
@@ -108,7 +108,7 @@ export const Authcontrollers = {
 
 
 
-  confirm : async (req, res) => {
+  confirm: async (req, res) => {
     try {
       const { confirmpassword } = req.body;
 
@@ -134,7 +134,7 @@ export const Authcontrollers = {
 
 
 
-  searchUsers : async (req, res) => {
+  searchUsers: async (req, res) => {
     try {
       const { email } = req.body;
 
@@ -153,7 +153,7 @@ export const Authcontrollers = {
 
 
 
-  getAllUsers : async (req, res) => {
+  getAllUsers: async (req, res) => {
     try {
       const users = await AuthModel.find();
       res.send(users);
