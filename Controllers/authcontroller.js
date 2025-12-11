@@ -7,12 +7,22 @@ const secretKey = "SECRETKEY";
 
 
 
-const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-emailApi.setApiKey(
-  SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+function getBrevoClient() {
+  const apiKey = process.env.BREVO_API_KEY;
 
+  if (!apiKey) {
+    console.error("❌ BREVO_API_KEY tapılmadı!");
+    return null;
+  }
+
+  const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+  emailApi.setApiKey(
+    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+    apiKey
+  );
+
+  return emailApi;
+}
 
 
 export const Authcontrollers = {
@@ -90,7 +100,7 @@ export const Authcontrollers = {
       user.confirmpassword = otp;
       await user.save();
 
-await brevoClient.sendTransacEmail({
+  await emailApi.sendTransacEmail({
   sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
   to: [{ email: user.email }],
   subject: "Təsdiq Kodunuz",
