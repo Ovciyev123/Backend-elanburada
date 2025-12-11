@@ -2,37 +2,51 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-const app = express();
-app.use(express.json());
-app.use("/uploads", express.static("uploads")); 
 
+const app = express();
+
+// JSON parsing CORS-dan əvvəl olmalıdır
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+// Allowed origins
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://frontend-elanburada0802.vercel.app'
-  ,'https://evburada.site'
+  "http://localhost:5173",
+  "https://frontend-elanburada0802.vercel.app",
+  "https://evburada.site",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-   
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+// CORS - YALNIZ BİR DƏFƏ
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Postman, mobile, server requests
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.log("❌ CORS BLOCKED:", origin);
+        return callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+
+// Render üçün preflight
+app.options("*", cors());
 
 const port = process.env.PORT || 4000;
 
-
+// HTTP server
 const server = http.createServer(app);
 
+// Socket.io
 const io = new Server(server, {
   cors: {
-    origin: ['https://frontend-elanburada0802.vercel.app', 'http://localhost:5173','https://evburada.site'],
-    methods: ['GET', 'POST'],
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
     credentials: true,
   },
   transports: ["websocket", "polling"],
@@ -40,7 +54,7 @@ const io = new Server(server, {
 
 import "./Config/Config.js";
 
-// Router-lər
+// Routers
 import { authrouter } from "./Routers/authrouter.js";
 import addRouter from "./Routers/Addrouter.js";
 import { messagerouter } from "./Routers/Messagerouter.js";
@@ -50,21 +64,20 @@ import profilerouter from "./Routers/profilerouter.js";
 import { adminrouter } from "./Routers/AdminAuthRouter.js";
 
 
-
-// API endpoint-lər
+// API Routes
 app.use("/tacstyle/auth", authrouter);
 app.use("/api/ads", addRouter);
-app.use("/api/admin",adminrouter);
+app.use("/api/admin", adminrouter);
 app.use("/api/conversations", conversationrouter);
 app.use("/api/messages", messagerouter);
 app.use("/api/profile", profilerouter);
 
 
-
-// Socket.io başlat
+// Socket.io Init
 initializeSocket(io);
 
-// Serveri dinlə
+
+// Server start
 server.listen(port, () => {
   console.log(`${port} portunda dinleniyor`);
 });
