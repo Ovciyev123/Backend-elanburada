@@ -2,17 +2,18 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
-import Brevo from "brevo";
+import nodemailer from "nodemailer"
 const secretKey = "SECRETKEY";
 
-
-
-
-const emailApi = new Brevo.TransactionalEmailsApi();
-emailApi.setApiKey(
-  Brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465, 
+    secure: true, 
+    auth: {
+       user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+    }
+});
 
 
 export const Authcontrollers = {
@@ -84,17 +85,19 @@ export const Authcontrollers = {
         }
       }
 
-      let otp = Math.floor(100000 + Math.random() * 900000);
-      user.confirmpassword = otp;
-      await user.save();
+    let confirmcode = Math.floor(Math.random() * 999999);
+    console.log("random" + confirmcode)
+    user.confirmpassword = confirmcode;
+    console.log(user.confirmpassword)
+    await user.save();
+    
+    await transporter.sendMail({
+        from: process.env.SMTP_USER, 
+        to: user.email, 
+        subject: "Confirmation Code", 
+        html: `<b>Bu Sizin Confirm Kodunuzdur: ${confirmcode}</b>`, 
+    });
 
-
-     await emailApi.sendTransacEmail({
-  sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
-  to: [{ email: user.email }],
-  subject: "Təsdiq Kodunuz",
-  htmlContent: `<h1>${otp}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
-});
 
 
       return res.json({ message: "Confirmation code sent to email" });
