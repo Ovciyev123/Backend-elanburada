@@ -3,15 +3,11 @@ import jwt from 'jsonwebtoken';
 import { AuthModel } from '../Models/authmodel.js';
 import UserProfile from "../Models/Profilemodel.js";
 import Brevo from "brevo";
-const secretKey = "SECRETKEY";
-// Yeni API instance
-const apiInstance = new Brevo.TransactionalEmailsApi();
 
-// API KEY təyin et
-apiInstance.setApiKey(
-  Brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+const secretKey = "SECRETKEY";
+
+const emailApi = new Brevo.TransactionalEmailsApi();
+emailApi.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 
 
 
@@ -92,7 +88,7 @@ export const Authcontrollers = {
       user.confirmpassword = otp;
       await user.save();
 
-  await apiInstance.sendTransacEmail({
+ await emailApi.sendTransacEmail({
   sender: { email: "faganio-af206@code.edu.az", name: "ElanBurada" },
   to: [{ email: user.email }],
   subject: "Təsdiq Kodunuz",
