@@ -78,18 +78,20 @@ export const Authcontrollers = {
         }
       }
 
-    let confirmcode = Math.floor(Math.random() * 999999);
-    console.log("random" + confirmcode)
-    user.confirmpassword = confirmcode;
-    console.log(user.confirmpassword)
-    await user.save();
-    
-       await resend.emails.send({
-      from: "ElanBurada <onboarding@resend.dev>",
+      let confirmcode = Math.floor(100000 + Math.random() * 900000);
+
+      console.log("OTP:", confirmcode);
+
+      user.confirmpassword = confirmcode;
+      await user.save();
+
+      await resend.emails.send({
+        from: "ElanBurada <noreply@evburada.site>",
         to: user.email,
         subject: "Təsdiq Kodunuz",
         html: `<h1>${confirmcode}</h1><p>Bu sizin təsdiq kodunuzdur.</p>`
       });
+
 
 
 
